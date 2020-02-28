@@ -1,34 +1,26 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
 import axios from 'axios';
-import Movie from './Movie';
 
-const UpdateMovie = (props) => {
+const initialState = {
+    id: '',
+    title: '',
+    director: '',
+    metascore: '',
+    stars: []
+};
 
-    const [movie, setMovie] = useState(props.movie);
+const UpdateMovieForm = (props) => {
 
-    const handleChange = (event) => {
-        setMovie({
-            ...movie,
-            [event.target.name]: event.target.value
-        })
-    };
+    const [movie, setMovie] = useState(initialState);
+    const {id} = useParams();
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
-        let stars
-        if (movie.stars instanceof Array) {
-            stars = movie.stars
-        }
-        else {
-            stars = movie.stars.split(",")
-        }
-        const payload = {
-            ...movie,
-            stars: stars
-        }
-    };
+    // useEffect(() => {
+    //     dataUpdate = props.
+    // });
+   
     axios
-        .put(`http://localhost:5000/api/movies/${movie.id}`, payload)
+        .put(`http://localhost:5000/api/movies/${movie.id}`, movie)
         .then(res => props.history.push('/'))
         .catch(err => console.log('Data not received', err))
 
@@ -79,4 +71,4 @@ const UpdateMovie = (props) => {
 
 };
 
-export default UpdateMovie;
+export default UpdateMovieForm;
