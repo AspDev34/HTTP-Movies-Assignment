@@ -29,7 +29,10 @@ function Movie(props) {
     event.preventDefault();
     axios.delete(`http://localhost:5000/api/movies/${id}`)
       .then(res => {
-        props.setMovie(res.data);
+        console.log('RES DAATA', res)
+        const arr = props.movieList.filter((movie) => `${movie.id}` !== id)//`S{movie.id}` string to string comparison
+        console.log('ARRDATA', arr)
+        props.setMovie(arr);
         props.history.push('/');
       })
   };

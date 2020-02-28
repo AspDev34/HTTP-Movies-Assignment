@@ -10,18 +10,25 @@ const App = () => {
   const [savedList, setSavedList] = useState([]); //this is passed via props to SavedList.js
   const [movieList, setMovieList] = useState([]);//this is passed via props to MovieList.js
 
-  const getMovieList = () => {//grabs all data from movies array on server, passes it to setMovieList() for manipulation.
-    axios
-      .get("http://localhost:5000/api/movies")
-      .then(res => setMovieList(res.data))
-      .catch(err => console.log(err.response));
-  };
+  // const getMovieList = () => {//grabs all data from movies array on server, passes it to setMovieList() for manipulation.
+  //   axios
+  //     .get("http://localhost:5000/api/movies")
+  //     .then(res => setMovieList(res.data))
+  //     .catch(err => console.log(err.response)); //ALL MOVED WITHIN USEEFFECT
+  // };
 
   const addToSavedList = movie => {//spreads in existing savedList movie data, then adds additional movie passed in. 
     setSavedList([...savedList, movie]);
   };
 
   useEffect(() => {
+    const getMovieList = () => {//grabs all data from movies array on server, passes it to setMovieList() for manipulation.
+      axios
+        .get("http://localhost:5000/api/movies")
+        .then(res => setMovieList(res.data))
+        .catch(err => console.log(err.response));
+    };
+  
     getMovieList();
   }, []);
 
@@ -34,7 +41,7 @@ const App = () => {
         <MovieList movies={movieList} />
       </Route>
 
-      <Route path="/movies/:id" render={props => <Movie {...props} addToSavedList={addToSavedList} setMovie={setMovieList}/>}/>
+      <Route path="/movies/:id" render={props => <Movie {...props} addToSavedList={addToSavedList} setMovie={setMovieList} movieList={movieList}/>}/>
 
       <Route path='/update-movie/:id' 
       render={props => <UpdateMovieForm {...props} movieList={movieList} setMovieList={setMovieList}/>}/>
