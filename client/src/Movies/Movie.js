@@ -50,13 +50,13 @@ function Movie(props) {
         Save
       </div>
       
-      <div className='update-movie-button' onClick={handleUpdate}>
+      <button className='update-movie-button' onClick={handleUpdate}>
         Edit Movies
-      </div>
+      </button>
 
-      <div className='delete-button' onClick={handleDelete}>
+      <button className='delete-button' onClick={handleDelete}>
         Remove movie from list
-      </div>
+      </button>
     </div>
   );
 };

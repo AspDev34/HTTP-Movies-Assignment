@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
 
-const initialState = {
+const initialValue = {
     id: '',
     title: '',
     director: '',
@@ -12,61 +12,90 @@ const initialState = {
 
 const UpdateMovieForm = (props) => {
 
-    const [movie, setMovie] = useState(initialState);
+    const [movie, setMovie] = useState(initialValue);
     const {id} = useParams();
 
-    // useEffect(() => {
-    //     dataUpdate = props.
-    // });
+    useEffect(() => {
+       let dataToUpdate = props.movieList.find(e => `${e.id}`=== id);
+       if (dataToUpdate) {setMovie(dataToUpdate)};
+    }, [props.movieList, id]);//the comma after props.movieList is allowing for the monitoring of two dependencies. 
    
-    axios
-        .put(`http://localhost:5000/api/movies/${movie.id}`, movie)
-        .then(res => props.history.push('/'))
-        .catch(err => console.log('Data not received', err))
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        axios.put(`http://localhost:5000/api/movies/${movie.id}`,movie)
+        .then(res => {
+            console.log(res,'response put then');
+            const updatedMovie = props.movieList.map(item => {
+                if (item.id === res.data.id){
+                    return res.data;
+                } else {
+                    return item;
+                }
+            });
+            props.setMovieList(updatedMovie);
+            props.history.push('/');
+            console.log(res)})
+        .catch(err => console.log(err,'error posting data'))
+    };
+
+    const handleChange = (event) => {
+        event.persist();
+        const inputValue = event.target.value;
+        if (event.target.name === 'stars') {inputValue = [inputValue]}
+
+        setMovie({...movie, [event.target.name]: event.target.value})
+    };
 
     return (
 
-        <form onSubmit={handleSubmit}>
+        <div className='edit-form'>
+            <h1>Update Movie Details</h1>
 
-            <label>Title:
-                <input 
-                value={movie.title}
-                onChange={handleChange}
-                type="text"
-                name="title"
-                />
-            </label>
+            <form onSubmit={handleSubmit}>
 
-            <label>Director:
-                <input 
-                value={movie.director}
-                onChange={handleChange}
-                type="text"
-                name="director"
-                />
-            </label>
+                <label htmlFor='title'>
+                    <input 
+                    type='text'
+                    name='title'
+                    onChange={handleChange}
+                    placeholder='title'
+                    value={movie.title}                    
+                    />
+                </label>
 
-            <label>Meta:
-                <input 
-                value={movie.metascore}
-                onChange={handleChange}
-                type="text"
-                name="metascore"
-                />
-            </label>
+                <label htmlFor='director'>
+                    <input 
+                    type='text'
+                    name='director'
+                    onChange={handleChange}
+                    placeholder='director'
+                    value={movie.director}
+                    />
+                </label>
 
-            <label>Actors:
-                input 
-                value={movie.stars}
-                onChange={handleChange}
-                type="text"
-                name="stars"
-                />
-            </label>
+                <label htmlFor='metascore'>
+                    <input 
+                    type='number'
+                    name='metascore'
+                    onChange={handleChange}
+                    placeholder='metascore'
+                    value={movie.metascore}
+                    />
+                </label>
 
-            <button type="submit">Update Movie</button>
+                <label htmlFor='stars'>
+                    <input 
+                    type='text'
+                    name='stars'
+                    onChange={handleChange}
+                    placeholder='stars'
+                    value={movie.stars}
+                    />
+                </label>
 
-        </form>
+                <button type='submit'>Add changes</button>
+            </form>
+        </div>
     );
 
 };
